@@ -1,0 +1,44 @@
+:root{
+    --primary: #087E8B;
+    --primaryLight: #85c0c7;
+    --secondary: #FF5a5f;
+
+    --dark: #3c3c3c;
+    --light: #f5f5f5;
+    --other: #C18395;
+}
+
+
+.bg-primary{
+    background-color: var(--primary) !important;
+}
+
+.bg-primary-light{
+    background-color: var(--primaryLight) !important;
+}
+
+.bg-secondary{
+    background-color: var(--secondary)  !important;
+}
+
+.btn-primary{
+    color: #fff;
+    background-color: var(--primary)  !important;
+    border-color: var(--primary) !important;
+}
+
+.btn-secondary{
+    color: #fff;
+    background-color: var(--secondary) !important;
+    border-color: var(--secondary) !important;
+}
+
+body{
+    font-family: 'Lato', sans-serif;
+}
+
+.home
+{
+    overflow: hidden;
+    max-height: 100vh;
+}

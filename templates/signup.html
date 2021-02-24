@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}"/>
+    <title>Create a new account - Restaurant Application</title>
+</head>
+<body class="bg-primary">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4 p-5">
+            <div class="card mt-5">
+                <div class="card-body">
+                  <h5 class="card-title">Welcome to {{data.brandName}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">Please fill up the information to get started with {{data.brandName}}</h6>
+                
+                    <form>
+                        <input type="text" placeholder="Enter the name of the Restaurant" class="form-control mb-2 mt-3"/>
+                        <input type="email" placeholder="Enter your email here." class="form-control mb-2"/>
+                        <input type="email" placeholder="Confirm your email here." class="form-control mb-2"/>
+                        <input type="password" placeholder="Enter your password here." class="form-control mb-2"/>
+                        <input type="checkbox"  /> <span class="mb-2"> I agree to the  <a href="#">terms & conditions </a>of {{data.brandName}} </span>
+                        <input type="submit" value="Sign Up" class="btn btn-primary btn-block mb-2 mt-2" />
+                    </form>
+
+                  
+                  <a href="#" class="card-link">Forgot Password ?</a>
+                  <br/>
+                  <p>Already a member ? <a href="{{url_for('index')}}" class="card-link">Sign In</a></p>
+
+                </div>
+                <div class="card-footer text-center">
+                    &copy; Copyright 2021 Restaurant Management System
+                </div>
+              </div>
+              
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</body>
+</html>

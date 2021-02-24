@@ -1,0 +1,17 @@
+<!-- Sidebar -->
+<div class="bg-primary border-right text-white" id="sidebar-wrapper">
+    <div class="sidebar-heading">RMS </div>
+    <div class="list-group list-group-flush text-white">
+      <a href="{{url_for('dashboard')}}" class="list-group-item list-group-item-action bg-primary-light text-white">Dashboard</a>
+      <a href="#" class="list-group-item list-group-item-action bg-primary-light text-white">Create an Order</a>
+      <a href="{{url_for('table_reservation')}}" class="list-group-item list-group-item-action bg-primary-light text-white">Table Reservation</a>
+      <a href="#" class="list-group-item list-group-item-action bg-primary-light text-white">Menu Management</a>
+      <a href="#" class="list-group-item list-group-item-action bg-primary-light text-white">Orders History</a>
+     
+     
+    </div>
+    <div class="list-group p-2" style="position:absolute;bottom:0px;">
+      <span>&copy; {{data.brandName}} 2021</span>
+    </div>
+  </div>
+  <!-- /#sidebar-wrapper -->
