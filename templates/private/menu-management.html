@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {%include 'links.html'%}
+    <title>Home - Restaurant Application</title>
+    <style>
+       .card-header > a
+      {
+          text-decoration:none !important;
+      }
+      .card-header
+      {
+        background-color: var(--secondary);
+      }
+      .card-header > a > h5{
+        color: white;
+        font-weight: 800px;;
+      }
+    </style>
+</head>
+<body>
+
+    <div class="d-flex" id="wrapper">
+
+        {% include 'private/content/sidebar.html' %}
+    
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+    
+          {% include 'private/content/navbar.html' %}
+    
+          <div class="container-fluid p-5">
+            <h1 class="">Menu Management</h1>
+            <p>All Your Menu Items Will Appear Here. You can add, update or delete these items.</p>
+            <p>The menu heirarchy is: category/product/&lt;optional-item&gt;</p>
+
+            
+            <div class="accordion md-accordion" id="accordionEx" role="tablist" aria-multiselectable="true">
+          
+
+              
+
+
+              {%for key in data.menu.keys() %}
+                <!-- Accordion card -->
+                <div class="card">
+            
+                  <!-- Card header -->
+                  <div class="card-header" role="tab" id="{{key}}heading">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx" href="#{{key}}collapse"
+                      aria-expanded="false" aria-controls="collapseTwo2">
+                      <h5 class="mb-0">
+                        Category: {{key}} <i class="fas fa-angle-down rotate-icon ml-2"></i>
+                      </h5>
+                    </a>
+                  </div>
+              
+                  <!-- Card body -->
+                  <div id="{{key}}collapse" class="collapse" role="tabpanel" aria-labelledby="{{key}}heading"
+                    data-parent="#accordionEx">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-2 mb-2">
+                          <button data-toggle="modal"  onclick="addProduct('{{key}}')" data-target="#addProductModal" class="btn btn-block btn-primary p-2"><i class="fas fa-plus"></i>  Add More Products</button>
+                        </div>
+                      </div>
+        
+                     {%if data.menu[key]|length == 0%}
+                        <p>Currently, there are no items in <b class="text-primary">{{key}}</b> category</p>
+                      {%else%}
+                      <table class="table">
+                          <thead>
+                            <tr>
+                              <th>Image</th>
+                              <th>Product Name</th>
+                              <th>Active</th>
+                              <th>Edit</th>
+                            </tr>
+                            
+                          </thead>
+                          <tbody>
+                            {%for row in data.menu[key]%}
+                            <tr>
+                              <td><img src="https://picsum.photos/60" alt="No Image Found"/></td>
+                              <td>{{row['name']}}</td>
+                              <td>
+                                <label class="switch">
+                                  <input type="checkbox">
+                                  <span class="slider round"></span>
+                                </label>
+                              </td>
+                              <td><a href="#"><i class="fas fa-edit text-primary"></i></a></td>
+                            </tr>
+                            {%endfor%}
+                          </tbody>
+                      </table>
+                     {%endif%}
+
+                     {{data.menu[key].length}}
+                    </div>
+                  </div>
+              
+                </div>
+                <!-- Accordion card -->
+              
+              {%endfor%}
+              
+              
+            
+            
+            
+            </div>
+            <!-- Accordion wrapper -->
+            
+         
+  
+  
+
+            
+        </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    
+      </div>
+      <!-- /#wrapper -->
+
+
+
+
+      <!-- ADD NEW PRODUCT MODAL STARTS -->
+
+
+      <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header bg-primary">
+              <h5 class="modal-title text-white" id="exampleModalLongTitle">Add New Product for: <span class="text-secondary" id="productCategoryInModal"></span>  </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" class="text-white">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Add a new product here. </p>
+              <form onsubmit="return false">
+                <input type="hidden" name="category" />
+                <input type="text" class="form-control mb-2" name="product_name" placeholder="Enter product name" onblur="xyz()"/>
+                <input type="text" class="form-control mb-2" name="price" placeholder="Enter price in CAD"/>
+                <input type="text" class="form-control mb-2" name="variant" placeholder="Enter the variants of "/>
+                <small>If you have more than one variants, type the variants seperated by comma. eg: <b>small,large,party</b></small>
+                <div class="form-group">
+                  <label for="file">Upload product image here:</label>
+                <input type="file" id="file" class="form-control-file mb-2" onchange="fileValidation()" name="image"/>
+                </div>
+              </form>
+              <hr/>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-secondary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+      <!-- ADD NEW PRODUCT MODAL ENDS-->
+
+      <script>
+        $("#menu-toggle").click(function(e) {
+          e.preventDefault();
+          $("#wrapper").toggleClass("toggled");
+        });
+
+        var addProduct = (category)=>{
+          
+          $("#productCategoryInModal").text(category);
+          $("inpu[name=category]").val(category);
+        }
+
+
+
+        function fileValidation(){
+          var fileInput = document.getElementById('file');
+          var filePath = fileInput.value;
+          var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+          if(!allowedExtensions.exec(filePath)){
+            $.toast({
+    text: "Please upload file having extensions .jpeg/.jpg/.png/.gif only.", // Text that is to be shown in the toast
+    heading: 'Error', // Optional heading to be shown on the toast
+    icon: 'error', // Type of toast icon
+    showHideTransition: 'fade', // fade, slide or plain
+    allowToastClose: false, // Boolean value true or false
+    hideAfter: 6000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
+    stack: 5, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
+    position: 'top-center', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
+    
+    
+    
+    textAlign: 'left',  // Text alignment i.e. left, right or center
+    loader: true,  // Whether to show loader or not. True by default
+    loaderBg: '#087E8B',  // Background color of the toast loader
+    bgColor: '#FF5a5f'
+});
+              fileInput.value = '';
+              return false;
+          }else{
+              //Image preview
+              if (fileInput.files && fileInput.files[0]) {
+                  var reader = new FileReader();
+                  reader.onload = function(e) {
+                      document.getElementById('imagePreview').innerHTML = '<img src="'+e.target.result+'"/>';
+                  };
+                  reader.readAsDataURL(fileInput.files[0]);
+              }
+          }
+      }
+
+
+
+      var xyz = ()=>{
+        $('input[name=variant]').attr('placeholder','Enter the variants of '+$('input[name=product_name]').val());}
+      </script>
+    
+</body>
+</html>
