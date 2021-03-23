@@ -34,85 +34,41 @@
             <p>All Your Menu Items Will Appear Here. You can add, update or delete these items.</p>
             <p>The menu heirarchy is: category/product/&lt;optional-item&gt;</p>
 
-            
-            <div class="accordion md-accordion" id="accordionEx" role="tablist" aria-multiselectable="true">
-          
+            <form action="/menu-management/add-category/" method="POST">
+                <div class="row mb-3">
+                  <div class="col-8">
 
-              
-
-
-              {%for key in data.menu.keys() %}
-                <!-- Accordion card -->
-                <div class="card">
-            
-                  <!-- Card header -->
-                  <div class="card-header" role="tab" id="{{key}}heading">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx" href="#{{key}}collapse"
-                      aria-expanded="false" aria-controls="collapseTwo2">
-                      <h5 class="mb-0">
-                        Category: {{key}} <i class="fas fa-angle-down rotate-icon ml-2"></i>
-                      </h5>
-                    </a>
+                    <input type="text" name="category" placeholder="e.g. Starters, Mains, Dessert, etc." class="form-control"/>
+                    <small>Enter <b>category</b> name here</small>
                   </div>
-              
-                  <!-- Card body -->
-                  <div id="{{key}}collapse" class="collapse" role="tabpanel" aria-labelledby="{{key}}heading"
-                    data-parent="#accordionEx">
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-md-2 mb-2">
-                          <button data-toggle="modal"  onclick="addProduct('{{key}}')" data-target="#addProductModal" class="btn btn-block btn-primary p-2"><i class="fas fa-plus"></i>  Add More Products</button>
-                        </div>
-                      </div>
-        
-                     {%if data.menu[key]|length == 0%}
-                        <p>Currently, there are no items in <b class="text-primary">{{key}}</b> category</p>
-                      {%else%}
-                      <table class="table">
-                          <thead>
-                            <tr>
-                              <th>Image</th>
-                              <th>Product Name</th>
-                              <th>Active</th>
-                              <th>Edit</th>
-                            </tr>
-                            
-                          </thead>
-                          <tbody>
-                            {%for row in data.menu[key]%}
-                            <tr>
-                              <td><img src="https://picsum.photos/60" alt="No Image Found"/></td>
-                              <td>{{row['name']}}</td>
-                              <td>
-                                <label class="switch">
-                                  <input type="checkbox">
-                                  <span class="slider round"></span>
-                                </label>
-                              </td>
-                              <td><a href="#"><i class="fas fa-edit text-primary"></i></a></td>
-                            </tr>
-                            {%endfor%}
-                          </tbody>
-                      </table>
-                     {%endif%}
+                  <div class="col-4">
 
-                     {{data.menu[key].length}}
-                    </div>
+                    <input type="submit" value="Create Category" class="btn btn-block btn-primary"/>
                   </div>
-              
                 </div>
-                <!-- Accordion card -->
-              
+            </form>
+
+
+
+
+              {%for category in data['categories']%}
+
+
+
               {%endfor%}
-              
-              
-            
-            
-            
-            </div>
-            <!-- Accordion wrapper -->
-            
-         
+
+
+
+                   {%if data['categories']|length ==0 %}
+                   <div class="alert alert-warning">
+                     <i class="fas fa-info-circle"></i> &nbsp; The Menu Not Found. Please Start Creating the menu by creating product categories.
+                   </div>
+                   {%endif%}
+
+
+
+
+
   
   
 
