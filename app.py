@@ -1,15 +1,19 @@
 # imports start
 from flask import Flask, jsonify, session
 from flask import render_template, request, flash, redirect, url_for
+from werkzeug.utils import secure_filename
 from config import *
 import time
 import requests
+import os
 
 # imports end
 
 app = Flask(__name__)
 
 app.secret_key = SECRET_KEY
+app.config['MAX_CONTENT_PATH'] = MAX_CONTENT_PATH
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.route('/')
@@ -104,14 +108,49 @@ def menu_management():
 
         "categories": d
     }
+    print(get_user_signed_in())
     return render_template("private/menu-management.html", data=data)
 
 
 @app.route('/menu-management/add-category/', methods=["POST"])
 def menu_management_add_category():
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
     category = request.form['category']
     r = requests.post(API_URL + "/category/", json={"name": category, "restaurant": get_user_signed_in()})
     return redirect(url_for('menu_management'))
+
+
+@app.route("/menu-management/delete-category/", methods=["GET"])
+def menu_management_delete_category():
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
+    id = request.args.get("id")
+    r = requests.delete(API_URL + "/category/", json={"category_id": id, "restaurant": get_user_signed_in()})
+    return redirect(url_for('menu_management'))
+
+
+@app.route("/menu-management/add-product/", methods=["POST"])
+def menu_management_add_product():
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
+    f = request.files['product_image']
+    image = f.filename
+    category = request.form['category']
+    productName = request.form['product_name']
+    price = request.form['price']
+    variants = request.form['variants'].split(",")
+    data = {
+        "image": image,
+        "category": category,
+        "name": productName,
+        "price": price,
+        "variants": variants,
+        "restaurant": get_user_signed_in()
+    }
+    f.save(os.path.join(UPLOAD_FOLDER, image))
+    r = requests.post(API_URL + "/product/", json=data)
+    return redirect(url_for('menu_management', product="added"))
 
 
 # private content ends
