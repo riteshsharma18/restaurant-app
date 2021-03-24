@@ -48,14 +48,38 @@
                 </div>
             </form>
 
-
+            <div class="accordion" id="accordionExample">
 
 
               {%for category in data['categories']%}
 
 
 
+
+
+              <div class="card z-depth-0 bordered">
+                <div class="card-header" id="headingOne" style="cursor: pointer; color:white;"  data-toggle="collapse" data-target="#col{{category['id']}}"
+                aria-expanded="true" aria-controls="col{{category['id']}}">
+                  <h5 class="mb-0" >
+
+                      {{category['category']}}
+
+
+                  </h5>
+                </div>
+                <div id="col{{category['id']}}" class="collapse {%if category['id'] == data['categories'][0]['id']%} show {%endif%}" aria-labelledby="headingOne"
+                  data-parent="#accordionExample">
+                  <div class="card-body">
+                    <p><a href="#" id="ap{{category['id']}}" class="add-product-selector   class-{{category['category']}}">Add Products</a> in {{category['category']}} category, or just completely <a href="{{url_for('menu_management_delete_category', id=category['id'])}}">delete it.</a></p>
+
+                  </div>
+                </div>
+              </div>
+
               {%endfor%}
+            </div>
+
+
 
 
 
@@ -69,14 +93,14 @@
 
 
 
-  
-  
 
-            
+
+
+
         </div>
         </div>
         <!-- /#page-content-wrapper -->
-    
+
       </div>
       <!-- /#wrapper -->
 
@@ -87,6 +111,8 @@
 
 
       <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalTitle" aria-hidden="true">
+        <form action="{{url_for('menu_management_add_product')}}" method="POST" enctype="multipart/form-data">
+
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header bg-primary">
@@ -97,26 +123,26 @@
             </div>
             <div class="modal-body">
               <p>Add a new product here. </p>
-              <form onsubmit="return false">
                 <input type="hidden" name="category" />
-                <input type="text" class="form-control mb-2" name="product_name" placeholder="Enter product name" onblur="xyz()"/>
-                <input type="text" class="form-control mb-2" name="price" placeholder="Enter price in CAD"/>
-                <input type="text" class="form-control mb-2" name="variant" placeholder="Enter the variants of "/>
+                <input type="text" required class="form-control mb-2" name="product_name" placeholder="Enter product name" onblur="xyz()"/>
+                <input type="text"  required class="form-control mb-2" name="price" placeholder="Enter price in CAD"/>
+                <input type="text" required class="form-control mb-2" name="variants" placeholder="Enter the variants of "/>
                 <small>If you have more than one variants, type the variants seperated by comma. eg: <b>small,large,party</b></small>
                 <div class="form-group">
                   <label for="file">Upload product image here:</label>
-                <input type="file" id="file" class="form-control-file mb-2" onchange="fileValidation()" name="image"/>
+                <input type="file" id="file" required class="form-control-file mb-2" onchange="fileValidation()" name="product_image"/>
                 </div>
-              </form>
               <hr/>
-              
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-secondary">Save changes</button>
+              <button type="submit" class="btn btn-secondary">Save changes</button>
             </div>
           </div>
         </div>
+      </form>
+
       </div>
 
 
@@ -131,11 +157,17 @@
           $("#wrapper").toggleClass("toggled");
         });
 
-        var addProduct = (category)=>{
-          
+
+
+        $("a.add-product-selector").click((event)=>{
+
+          category = event.target.className.split("   ")[1].split("-").slice(1).join("-");
           $("#productCategoryInModal").text(category);
-          $("inpu[name=category]").val(category);
-        }
+          $("input[name=category]").val(this.id);
+          $("#addProductModal").modal('show');
+
+        });
+
 
 
 
