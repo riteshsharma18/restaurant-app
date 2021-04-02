@@ -78,8 +78,18 @@ def onboarding_send():
 def dashboard():
     if not check_user_signed_in():
         return redirect(url_for('index'))
+    categories = requests.get(API_URL + "/category/", json={"restaurant": get_user_signed_in()})
+    d = categories.json()
+
+    products = {}
+    for category in d:
+        r = requests.get(API_URL + "/product/", json={"restaurant": get_user_signed_in(), "category": category["id"]})
+        products[category["id"]] = r.json()
+
     data = {
         "brandName": BRAND_NAME,
+        "categories": d,
+        "products": products
 
     }
     return render_template("private/dashboard.html", data=data)
@@ -103,9 +113,15 @@ def menu_management():
 
     categories = requests.get(API_URL + "/category/", json={"restaurant": get_user_signed_in()})
     d = categories.json()
+
+    products = {}
+    for category in d:
+        r = requests.get(API_URL + "/product/", json={"restaurant": get_user_signed_in(), "category": category["id"]})
+        products[category["id"]] = r.json()
+
     data = {
         "brandName": BRAND_NAME,
-
+        "products": products,
         "categories": d
     }
     print(get_user_signed_in())
@@ -150,7 +166,23 @@ def menu_management_add_product():
     }
     f.save(os.path.join(UPLOAD_FOLDER, image))
     r = requests.post(API_URL + "/product/", json=data)
-    return redirect(url_for('menu_management', product="added"))
+    if r.json()["status"] == "OK":
+        return redirect(url_for('menu_management', product="added"))
+    return redirect(url_for('menu_management', product="failed"))
+
+
+@app.route('/menu-management/delete-product/', methods=["GET"])
+def menu_management_delete_product():
+    product_id = request.args.get('product', None)
+    category_id = request.args.get('category', None)
+    restaurant_id = request.args.get('restaurant', None)
+    if product_id and category_id and restaurant_id:
+        requests.delete(API_URL + "/product/",
+                        json={"product": product_id, "category": category_id, "restaurant": restaurant_id})
+        return redirect(url_for('menu_management', deleted='true'))
+
+    else:
+        return redirect(url_for('menu_management'))
 
 
 # private content ends
