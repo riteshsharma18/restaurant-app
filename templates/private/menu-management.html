@@ -72,6 +72,45 @@
                   <div class="card-body">
                     <p><a href="#" id="ap{{category['id']}}" class="add-product-selector   class-{{category['category']}}">Add Products</a> in {{category['category']}} category, or just completely <a href="{{url_for('menu_management_delete_category', id=category['id'])}}">delete it.</a></p>
 
+                    {%if data['products'][category['id']]%}
+
+                    <table class="table table-sm table-light table-striped table-bordered ">
+                      <thead class="bg-primary text-white text-center">
+                        <tr>
+                          <th>Product Name</th>
+                          <th>Price</th>
+                          <th>Variants Available</th>
+                          <th>Is Active</th>
+                          <th>Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for product in data['products'][category['id']] %}
+                        <tr>
+                          <td>{{product.name}}</td>
+                          <td>${{product.price}}</td>
+                          <td><ul>{%for variant in product.variants%}<li>{{variant}}</li>{%endfor%}</ul></td>
+                          <td>
+
+                            <center><label class="switch ">
+
+                              <input type="checkbox" {%if product.is_active=='true'%} checked {%endif%}>
+                              <span class="slider round"></span>
+                            </label></center>
+                          </td>
+                          <td class="text-center">
+                            <a href="{{url_for('menu_management_delete_product', product=product.id, restaurant=product.restaurant, category=product.category)}}"><i class="fas fa-trash-alt text-danger"></i></a>
+                          </td>
+                        </tr>
+                        {%endfor%}
+                      </tbody>
+                    </table>
+
+                    {% else %}
+                    <div class="alert alert-warning">
+                      <i class="fas fa-info-circle"></i> There are no products for this category as of now. Please starting add products by clicking add products above.
+                    </div>
+                    {% endif %}
                   </div>
                 </div>
               </div>
@@ -163,7 +202,8 @@
 
           category = event.target.className.split("   ")[1].split("-").slice(1).join("-");
           $("#productCategoryInModal").text(category);
-          $("input[name=category]").val(this.id);
+          console.log();
+          $("input[name=category]").val(event.target.id.substring(2));
           $("#addProductModal").modal('show');
 
         });

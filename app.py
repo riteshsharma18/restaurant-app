@@ -117,6 +117,7 @@ def menu_management():
     products = {}
     for category in d:
         r = requests.get(API_URL + "/product/", json={"restaurant": get_user_signed_in(), "category": category["id"]})
+        print(r.status_code)
         products[category["id"]] = r.json()
 
     data = {
@@ -164,6 +165,8 @@ def menu_management_add_product():
         "variants": variants,
         "restaurant": get_user_signed_in()
     }
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.mkdir(UPLOAD_FOLDER)
     f.save(os.path.join(UPLOAD_FOLDER, image))
     r = requests.post(API_URL + "/product/", json=data)
     if r.json()["status"] == "OK":

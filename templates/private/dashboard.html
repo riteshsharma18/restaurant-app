@@ -18,6 +18,17 @@
           <div class="container-fluid">
             <h1 class="mt-4">Create An Order</h1>
             <p>You can create an order here. Please start adding the products in the Tray</p>
+
+             {%for category in data['categories']%}
+               <div class="row">
+                  <div class="col-md-12 p-3">
+                    <h2 style="display:inline; border-bottom:2px solid black;">{{category.category}}</h2>
+                      <div class="row">
+                          <div class="col-2 col-md-2 col-lg-3"></div>
+                      </div>
+                  </div>
+              </div>
+              {%endfor%}
         </div>
         </div>
         <!-- /#page-content-wrapper -->
