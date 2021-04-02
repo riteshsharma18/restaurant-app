@@ -3,6 +3,13 @@
 <head>
   {%include 'links.html'%}
     <title>Home - Restaurant Application</title>
+    <style>
+        .image-holder
+        {
+            width:200px;
+            height:200px;
+        }
+    </style>
 </head>
 <body>
 
@@ -24,7 +31,14 @@
                   <div class="col-md-12 p-3">
                     <h2 style="display:inline; border-bottom:2px solid black;">{{category.category}}</h2>
                       <div class="row">
-                          <div class="col-2 col-md-2 col-lg-3"></div>
+                          {%for product in data.products[category.id]%}
+                           <div class="col-2 col-md-2 col-lg-3">
+                              <div class="image-holder">
+
+                                    <img src="../../images/{{product.image}}">
+                              </div>
+                          </div>
+                          {%endfor%}
                       </div>
                   </div>
               </div>
