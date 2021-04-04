@@ -18,6 +18,14 @@
         {
             width:100px;
             height:100px;
+            display:block;
+        }
+
+        .holder{
+            display:flex;
+             align-items:center;
+            justify-content:center;
+            flex-direction:column;
         }
 
     </style>
@@ -41,13 +49,18 @@
                <div class="row">
                   <div class="col-md-12 p-3">
                     <h2 style="display:inline; border-bottom:2px solid black;">{{category.category}}</h2>
-                      <div class="row">
+                      <div class="row mt-5">
                           {%for product in data.products[category.id]%}
-                           <div class="col-2 col-md-2 col-lg-3">
+                           <div class="col-1 col-md-1 col-lg-2 holder">
                               <div class="image-holder">
 
-                                    <img src="{{url_for('static', filename=product.image)}}">
+                                    <img src="{{url_for('static', filename='images/'+product.image)}}">
+                                    <br/>
+                                    <br/>
+
+
                               </div>
+                                 <h6>{{product.name}}</h6>
                           </div>
                           {%endfor%}
                       </div>
