@@ -26,6 +26,12 @@
              align-items:center;
             justify-content:center;
             flex-direction:column;
+            cursor:pointer;
+        }
+
+        .holder h6
+        {
+            font-weight:bold;
         }
 
     </style>
@@ -51,7 +57,8 @@
                     <h2 style="display:inline; border-bottom:2px solid black;">{{category.category}}</h2>
                       <div class="row mt-5">
                           {%for product in data.products[category.id]%}
-                           <div class="col-1 col-md-1 col-lg-2 holder">
+
+                           <div class="col-1 col-md-3 col-lg-2 holder" onclick="openAddToCartModal('{{product.id}}','{{product.category}}', '{{product.restaurant}}');">
                               <div class="image-holder">
 
                                     <img src="{{url_for('static', filename='images/'+product.image)}}">
@@ -61,6 +68,7 @@
 
                               </div>
                                  <h6>{{product.name}}</h6>
+                                ${{product.price}}
                           </div>
                           {%endfor%}
                       </div>
@@ -73,12 +81,55 @@
     
       </div>
       <!-- /#wrapper -->
+   <!-- ADD NEW PRODUCT MODAL STARTS -->
+
+
+      <div class="modal fade" id="addProductToTrayModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalTitle" aria-hidden="true">
+        <form action="{{url_for('menu_management_add_product')}}" method="POST" enctype="multipart/form-data">
+
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header bg-primary">
+              <h5 class="modal-title text-white" id="exampleModalLongTitle">Add To Tray  </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" class="text-white">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Enter Quantity</p>
+                <div class="text-center" style="font-size:72px">
+                    0
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button"class="btn btn-block btn-secondary"  style="height:100px; font-size:32px; font-weight:bold;" onclick="decrement();" >-</button>
+                    </div>  <div class="col-6">
+                        <button type="button"class="btn btn-block btn-secondary"  style="height:100px; font-size:32px; font-weight:bold;" onclick="increment()" >+</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-secondary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      </div>
 
       <script>
         $("#menu-toggle").click(function(e) {
           e.preventDefault();
           $("#wrapper").toggleClass("toggled");
         });
+
+
+        openAddToCartModal = (product, category, restaurant) => {
+           $("#addProductToTrayModal").modal('show');
+        }
       </script>
     
 </body>
