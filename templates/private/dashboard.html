@@ -85,7 +85,6 @@
 
 
       <div class="modal fade" id="addProductToTrayModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalTitle" aria-hidden="true">
-        <form action="{{url_for('menu_management_add_product')}}" method="POST" enctype="multipart/form-data">
 
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
@@ -96,10 +95,13 @@
               </button>
             </div>
             <div class="modal-body">
-              <p>Enter Quantity</p>
-                <div class="text-center" style="font-size:72px">
+                <p>Select Variant</p>
+                <div id="elements"></div>
+              <p>Quantity</p>
+                <div class="text-center" id="num" style="font-size:72px">
                     0
                 </div>
+
                 <hr/>
                 <div class="row">
                     <div class="col-6">
@@ -111,12 +113,11 @@
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-secondary">Save changes</button>
+              <button type="button" class="btn btn-secondary btn-block">Add To Tray</button>
             </div>
           </div>
         </div>
-      </form>
+
 
       </div>
 
@@ -126,10 +127,61 @@
           $("#wrapper").toggleClass("toggled");
         });
 
+        var number = 0;
 
-        openAddToCartModal = (product, category, restaurant) => {
-           $("#addProductToTrayModal").modal('show');
+        increment = ()=>{
+            number++;
+           $("#num").html(number);
         }
+
+
+        decrement = ()=>{
+
+            if(number>0)
+            {
+            number--;
+               $("#num").html(number);
+
+            }
+
+        }
+
+         renderVariants = (variants) => {
+            $("#elements").html("");
+
+            variants.forEach((variant)=>{
+                                var element = `
+                <input type="radio" name='selectedVariant' id="${variant}" value=${variant} /> ${variant} <br/>
+
+                `;
+
+                $("#elements").append(element);})
+
+
+
+        }
+        openAddToCartModal = (product, category, restaurant) => {
+        number = 0;
+
+            allProducts = {{data.products|safe}};
+            products = allProducts[category]
+            console.log( );
+            variants = products.filter( (pro) => { console.log(pro); return pro['id'] == product })[0]['variants'];
+            renderVariants(variants);
+           $("#addProductToTrayModal").modal('show');
+           $("#num").html(number);
+        }
+
+
+
+
+        addToTray = ()=>{
+
+
+
+        }
+
+
       </script>
     
 </body>

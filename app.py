@@ -86,6 +86,7 @@ def dashboard():
         r = requests.get(API_URL + "/product/", json={"restaurant": get_user_signed_in(), "category": category["id"]})
         products[category["id"]] = r.json()
 
+
     data = {
         "brandName": BRAND_NAME,
         "categories": d,
@@ -162,7 +163,7 @@ def menu_management_add_product():
         "category": category,
         "name": productName,
         "price": price,
-        "variants": variants,
+        "variants": variants.strip(),
         "restaurant": get_user_signed_in()
     }
     if not os.path.exists(UPLOAD_FOLDER):
