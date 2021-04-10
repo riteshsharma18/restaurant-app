@@ -396,17 +396,26 @@
                 else
                 {
 
+                    console.log("THIS IS CHECKOUT");
                     productsInTray.forEach((product)=>{
-                        console.log(product);
-                    })
+                        delete product['id'];
+                        delete product['category'];
+                        delete product['is_active'];
+                        delete product['restaurant'];
+                        delete product['variants'];
 
+
+
+                    });
+
+                    console.log(productsInTray);
                     $.ajax({
                         url:'localhost:7000/orders/',
                         method:'POST',
                         data:{
 
                         },
-                        success:(data)=>{}
+                        success:(data)=>{},
                         error:(err)=>{}
                     });
                 }
