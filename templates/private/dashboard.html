@@ -128,7 +128,7 @@
                       <div class="products mt-5" id="products_">
 
                       </div>
-                      <button class="btn btn-primary btn-block" style="align-self: flex-end;">Checkout</button>
+                      <button class="btn btn-primary btn-block" onclick="checkout()" style="align-self: flex-end;">Checkout</button>
                       <br/>
                       <br/>
 
@@ -383,14 +383,14 @@
 
 
 
-          checkout = ()={
+          checkout = ()=>{
 
 
                 if(productsInTray.length == 0)
                 {
                     $.toast({
-                        "message":"please add items in tray before checkout",
-                        "position":"top-center"
+                        text:"please add items in tray before checkout",
+                        position:"top-center"
                     });
                 }
 
