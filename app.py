@@ -163,7 +163,7 @@ def menu_management_add_product():
         "category": category,
         "name": productName,
         "price": price,
-        "variants": variants.strip(),
+        "variants": variants,
         "restaurant": get_user_signed_in()
     }
     if not os.path.exists(UPLOAD_FOLDER):
