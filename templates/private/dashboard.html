@@ -393,6 +393,23 @@
                         position:"top-center"
                     });
                 }
+                else
+                {
+
+                    productsInTray.forEach((product)=>{
+                        console.log(product);
+                    })
+
+                    $.ajax({
+                        url:'localhost:7000/orders/',
+                        method:'POST',
+                        data:{
+
+                        },
+                        success:(data)=>{}
+                        error:(err)=>{}
+                    });
+                }
 
           }
 
