@@ -189,6 +189,32 @@ def menu_management_delete_product():
         return redirect(url_for('menu_management'))
 
 
+@app.route("/orders/create/", methods=["POST"])
+def orders_create():
+    data = request.json  # data contains all the products.
+
+    total = sum([float(x['price']) * float(x['qty']) for x in data])
+
+    details = {'datetime': dt.datetime.now().strftime('%c'),
+               'order_total': total}
+
+    r = requests.post(API_URL + "/orders/",
+                      json={"restaurant": get_user_signed_in(), "details": details, "products": data})
+    print(r.status_code)
+    return {"status": "OK", "message": "Order Created Successfully", "order_total": total}
+
+
+@app.route("/orders/history/")
+def orders_history():
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
+    data = {
+        "brandName": BRAND_NAME
+    }
+    return render_template('private/order-history.html', data=data)
+
+
+
 # private content ends
 
 
