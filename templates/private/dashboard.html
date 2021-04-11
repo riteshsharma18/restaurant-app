@@ -398,6 +398,7 @@
 
                     console.log("THIS IS CHECKOUT");
                     productsInTray.forEach((product)=>{
+
                         delete product['id'];
                         delete product['category'];
                         delete product['is_active'];
@@ -405,19 +406,50 @@
                         delete product['variants'];
 
 
+                        console.log(product);
+
+
 
                     });
 
-                    console.log(productsInTray);
-                    $.ajax({
-                        url:'localhost:7000/orders/',
-                        method:'POST',
-                        data:{
 
+
+                    $.ajax({
+                        url:'/orders/create/',
+                        method:'POST',
+                        dataType:'json',
+                        contentType:'application/json',
+                        data:JSON.stringify(productsInTray),
+                        success:(data)=>{
+                            if( data.status == "OK")
+                            {
+                              $.toast({
+                                'text':"Order successfully created. Please serve the order to the customer and then start another order (if any). To see past orders, go to order history.",
+                                'position':'top-center'
+                              });
+
+                              cleanCart();
+
+                            }
                         },
-                        success:(data)=>{},
                         error:(err)=>{}
                     });
+                }
+
+
+                cleanCart = () => {
+
+                  $()
+                  productsInTray = []
+                  qtyInTray  = 0
+                  renderTray()
+                  updateTray()
+
+                  if(productsInTray.length == 0)
+            {
+              $(".empty-state").removeClass("not-active");
+            }
+
                 }
 
           }
