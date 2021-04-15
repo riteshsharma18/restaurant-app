@@ -55,7 +55,7 @@
 
           <div class="container-fluid">
             <div class="row ">
-                <div class="col-md-9 main-content">
+                <div class="col-md-12 p-5 main-content">
                   <h1 class="mt-4">Order History</h1>
                 <p>See your previous orders here</p>
 
@@ -64,19 +64,38 @@
                     <i class="fas fa-info"></i> There are no past orders yet. Go to <a href="{{url_for('index')}}">Create An Order</a> to make your first order.
                 </div>
                 {% else %}
-                Orders Will Appear Here.
+                    {%for order in data.orders%}
+                    <div class="row my-3 bg-primary-light" style=" padding: 5%; border-radius: 20px;">
+                        <div class="col-12" style="color:grey;">
+                            Order Date: {{order.details.datetime}} <br/>
+                            Order Number: {{order.id}}
+                            <hr/>
+                            {%for product in order.products%}
+                            <div class="row my-2">
+                                <div class="col-md-1" style="display: flex; justify-content: center;">
+                                    <img src="{{url_for('static', filename="images/")}}{{product.image}}" style="border-radius:5px; box-shadow: 2px 2px 5px grey;" width="50px" height="50px" />
+                                </div>
+                                <div class="col-md-11">
+                                    <span class="text-black" style="color: black; font-weight: bolder;">{{product.name}}</span>
+                                </div>
+                            </div>
+                            <hr/>
+                            {%endfor%}
+                        </div>
+
+                    </div>
+                    {%endfor%}
                 {% endif %}
 
 
                 </div>
-                <div class="col-md-3 p-3">
-                  </div>
+
             </div>
         </div>
         </div>
         <!-- /#page-content-wrapper -->
 
-
+      </div>
 
 
 </body>
