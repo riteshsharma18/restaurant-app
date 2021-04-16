@@ -55,12 +55,12 @@
     <div class="d-flex" id="wrapper">
 
         {% include 'private/content/sidebar.html' %}
-    
+
         <!-- Page Content -->
         <div id="page-content-wrapper">
-    
+
           {% include 'private/content/navbar.html' %}
-    
+
           <div class="container-fluid p-5">
 
 
@@ -82,7 +82,11 @@
 
 
 
+<<<<<<< HEAD
           
+=======
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
             {%if data.floors|length == 0%}
             <div class="alert alert-warning">
               <i class="fas fa-info-circle"></i> &nbsp; There are no tables / floors added yet. Please start adding floors first &nbsp;<a href="{{url_for('table_reservation_add_floor')}}"><i class="fas fa-plus"></i> Add a new floor</a>
@@ -95,15 +99,22 @@
             {%endif%}
 
             <!-- Table Visualization Starts -->
-            
+
               <!--Accordion wrapper-->
           <div class="accordion md-accordion" id="accordionEx" role="tablist" aria-multiselectable="true">
+<<<<<<< HEAD
           
 
             {%for floor in data.floors%}
             
+=======
+
+
+            {%for floor in data.floors%}
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
             <div class="card">
-          
+
               <!-- Card header -->
               <div class="card-header" role="tab" id="headingOne21">
                 <a data-toggle="collapse" data-parent="#accordionEx" href="#S{{floor.id}}" aria-expanded="true"
@@ -113,17 +124,21 @@
                   </h5>
                 </a>
               </div>
-          
+
               <!-- Card body -->
               <div id="S{{floor.id}}" class="collapse {%if loop.index == 1%} show {%endif%}" role="tabpanel" aria-labelledby="headingOne1"
                 data-parent="#accordionEx">
                 <div class="card-body">
-                 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
                   Below are the tables for Floor {{loop.index }}  {%if floor.permanent==False%}| <a href="#"> <i class="fas fa-trash-alt"></i></a> {%endif%}
 
                   {% if floor.tables|length ==0 %}
                     <div class="alert alert-warning"><i class="fas fa-info-circle"></i> &nbsp; There are no tables added on this floor. To add a table <a href="#" onclick="openAnotherModal('{{floor.id}}')" > Click Here</a></div>
+<<<<<<< HEAD
                   
                     {%else%}
                     <br/>
@@ -133,41 +148,73 @@
 
                   
                 
+=======
+
+                    {%else%}
+                    <br/>
+                    <a href="#" onclick="openAnotherModal('{{floor.id}}')">Add More Tables</a>
+
+                    {%endif%}
+
+
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
 
                   <div class="row p-1">
                     {%for table in floor.tables%}
                     <div class="col-md-1 mb-2">
+<<<<<<< HEAD
                       
+=======
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
                       <div class="res-table {%if table.bookedTill != None%} {%if data.currentTime <= table.bookedTill|int %} disable {%endif%} {%endif%}"  onclick="openReservator('{{table.table}}','{{table.name}}','{{table.location}}', '{{loop.index}}', '{{floor.id}}', {{data.currentTime}}, {{table.bookedTill|int}})"id="tableSquare">
                         <p class="res-table-num">{{loop.index}}</p>
                       </div>
                     </div>
                     {%endfor%}
                   </div>
+<<<<<<< HEAD
                     
                  
                   
                    
 
+=======
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
+
+
+
+
+
 
                 </div>
               </div>
-          
+
             </div>
 
 
             {%endfor%}
             <!-- Accordion card -->
+<<<<<<< HEAD
            
             <!-- Accordion card -->
           
             
             
           
+=======
+
+            <!-- Accordion card -->
+
+
+
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
           </div>
           <!-- Accordion wrapper -->
-          
-       
+
+
 
 
 
@@ -184,7 +231,7 @@
         </div>
         </div>
         <!-- /#page-content-wrapper -->
-    
+
       </div>
       <!-- /#wrapper -->
 
@@ -208,6 +255,7 @@
       </div>
       <div class="modal-body">
         <p> <span id="tTableName"></span></p>
+<<<<<<< HEAD
         
         <p> <span id="tlocation"></span></p>
         
@@ -215,6 +263,15 @@
         <input type="time" id="timePicker" class="form-control" placholder="Time Until"/>
         <p id="messageForTime"></p>
         
+=======
+
+        <p> <span id="tlocation"></span></p>
+
+        <hr/>
+        <input type="time" id="timePicker" class="form-control" placholder="Time Until"/>
+        <p id="messageForTime"></p>
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -279,6 +336,7 @@
           }
 
 
+<<<<<<< HEAD
 
           var selectedTableID = undefined
           var selectedFloorId = undefined
@@ -304,6 +362,33 @@
               $("#timePicker").show();
               $("#messageForTime").html("");
 
+=======
+
+          var selectedTableID = undefined
+          var selectedFloorId = undefined
+
+          var openReservator = (id, name, location, index, floor, currentTime, bookedTill)=>{
+
+
+            console.log(currentTime);
+            console.log(bookedTill);
+            selectedTableID = id;
+            selectedFloorId = floor;
+            $("#tnum").html(index);
+            $("#tlocation").html("Location: "+location);
+            $("#tTableName").html("Table Name: "+name);
+            if(currentTime<bookedTill)
+            {
+              time = new Date(bookedTill * 1000);
+              console.log(time)
+              $("#timePicker").hide();
+              $("#messageForTime").html("This Table is already booked. Check back at "+time.getHours()+":"+time.getMinutes());
+            }
+            else{
+              $("#timePicker").show();
+              $("#messageForTime").html("");
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
             }
 
             $("#exampleModalCenter").modal('show');
@@ -329,7 +414,11 @@
                 var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
                   var today = new Date()
                   var d = Date.parse(""+today.getDate()+" "+months[today.getMonth()]+" "+(today.getYear()+1900)+" "+t+":00 EDT");
+<<<<<<< HEAD
                   
+=======
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
                   if(today >= d)
                   {
                     alert("Cannot Reserve table, choose a future date.");
@@ -339,7 +428,11 @@
                   {
                     //alert("GOOD");
                     ticks = d;
+<<<<<<< HEAD
                  
+=======
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
                     $.ajax(
                       {
                         'url':"{{url_for('table_reservation_reserve')}}",
@@ -352,7 +445,11 @@
                         "success":(data)=>{
                           alert("Table Reservation Successfull. ");
                           location.reload()
+<<<<<<< HEAD
                           
+=======
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
                         },
                         "error":(err)=>{
                           alert("ERROR HPPEND");
@@ -367,7 +464,11 @@
               }
 
           }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> c3676157e858a5d04f7457c3d675faf4a51b179a
 
 
       </script>
