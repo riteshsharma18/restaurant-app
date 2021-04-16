@@ -43,6 +43,11 @@
         padding:5px;
         border-radius: 50%;
       }
+
+      .disable
+      {
+        background-color: lightgrey !important;
+      }
     </style>
 </head>
 <body>
@@ -78,119 +83,85 @@
 
 
           
+            {%if data.floors|length == 0%}
+            <div class="alert alert-warning">
+              <i class="fas fa-info-circle"></i> &nbsp; There are no tables / floors added yet. Please start adding floors first &nbsp;<a href="{{url_for('table_reservation_add_floor')}}"><i class="fas fa-plus"></i> Add a new floor</a>
+            </div>
+            {%else%}
+            <a href="{{url_for('table_reservation_add_floor')}}"><i class="fas fa-plus"></i> Add a new Floor</a>
+            <br/>
+            <br/>
+            <br/>
+            {%endif%}
 
             <!-- Table Visualization Starts -->
             
               <!--Accordion wrapper-->
           <div class="accordion md-accordion" id="accordionEx" role="tablist" aria-multiselectable="true">
           
-            <!-- Accordion card -->
+
+            {%for floor in data.floors%}
+            
             <div class="card">
           
               <!-- Card header -->
-              <div class="card-header" role="tab" id="headingOne1">
-                <a data-toggle="collapse" data-parent="#accordionEx" href="#collapseOne1" aria-expanded="true"
+              <div class="card-header" role="tab" id="headingOne21">
+                <a data-toggle="collapse" data-parent="#accordionEx" href="#S{{floor.id}}" aria-expanded="true"
                   aria-controls="collapseOne1">
                   <h5 class="mb-0">
-                    Floor 1 Tables <i class="fas fa-angle-down rotate-icon"></i>
+                    Floor {{loop.index }} Tables {% if floor.name %} ({{floor.name}}) {%endif%} <i class="fas fa-angle-down rotate-icon"></i>
                   </h5>
                 </a>
               </div>
           
               <!-- Card body -->
-              <div id="collapseOne1" class="collapse show" role="tabpanel" aria-labelledby="headingOne1"
+              <div id="S{{floor.id}}" class="collapse {%if loop.index == 1%} show {%endif%}" role="tabpanel" aria-labelledby="headingOne1"
                 data-parent="#accordionEx">
                 <div class="card-body">
                  
 
-                  Below are the tables for Floor 1
+                  Below are the tables for Floor {{loop.index }}  {%if floor.permanent==False%}| <a href="#"> <i class="fas fa-trash-alt"></i></a> {%endif%}
+
+                  {% if floor.tables|length ==0 %}
+                    <div class="alert alert-warning"><i class="fas fa-info-circle"></i> &nbsp; There are no tables added on this floor. To add a table <a href="#" onclick="openAnotherModal('{{floor.id}}')" > Click Here</a></div>
+                  
+                    {%else%}
+                    <br/>
+                    <a href="#" onclick="openAnotherModal('{{floor.id}}')">Add More Tables</a>
+                  
+                    {%endif%}
+
+                  
+                
 
                   <div class="row p-1">
+                    {%for table in floor.tables%}
                     <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
+                      
+                      <div class="res-table {%if table.bookedTill != None%} {%if data.currentTime <= table.bookedTill|int %} disable {%endif%} {%endif%}"  onclick="openReservator('{{table.table}}','{{table.name}}','{{table.location}}', '{{loop.index}}', '{{floor.id}}', {{data.currentTime}}, {{table.bookedTill|int}})"id="tableSquare">
+                        <p class="res-table-num">{{loop.index}}</p>
                       </div>
                     </div>
-                    <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
-                      </div>
-                    </div>
-                    <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
-                      </div>
-                    </div>
-                    <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
-                      </div>
-                    </div>
-                    <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
-                      </div>
-                    </div>
-                    <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
-                      </div>
-                    </div>
-                    <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
-                      </div>
-                    </div>
-                    <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
-                      </div>
-                    </div>
-                    <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
-                      </div>
-                    </div>
-                    <div class="col-md-1 mb-2">
-                      <div class="res-table" id="tableSquare">
-                        <p class="res-table-num">1</p>
-                      </div>
-                    </div>
+                    {%endfor%}
+                  </div>
                     
+                 
+                  
                    
 
-                  </div>
 
                 </div>
               </div>
           
             </div>
+
+
+            {%endfor%}
+            <!-- Accordion card -->
+           
             <!-- Accordion card -->
           
-            <!-- Accordion card -->
-            <div class="card">
-          
-              <!-- Card header -->
-              <div class="card-header" role="tab" id="headingTwo2">
-                <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx" href="#collapseTwo2"
-                  aria-expanded="false" aria-controls="collapseTwo2">
-                  <h5 class="mb-0">
-                    Floor 3 Tables <i class="fas fa-angle-down rotate-icon"></i>
-                  </h5>
-                </a>
-              </div>
-          
-              <!-- Card body -->
-              <div id="collapseTwo2" class="collapse" role="tabpanel" aria-labelledby="headingTwo2"
-                data-parent="#accordionEx">
-                <div class="card-body">
-                 Tables will appear here soon
-                </div>
-              </div>
-          
-            </div>
-            <!-- Accordion card -->
-          
+            
             
           
           </div>
@@ -230,20 +201,24 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header bg-primary">
-        <h5 class="modal-title text-white" id="exampleModalLongTitle">Details For Table 1</h5>
+        <h5 class="modal-title text-white" id="exampleModalLongTitle">Details For Table <span id="tnum"></span></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" class="text-white">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <p>Location: 4th from Entrance, Right Side</p>
-        <p>Max People: 7</p>
+        <p> <span id="tTableName"></span></p>
+        
+        <p> <span id="tlocation"></span></p>
+        
         <hr/>
+        <input type="time" id="timePicker" class="form-control" placholder="Time Until"/>
+        <p id="messageForTime"></p>
         
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-secondary">Save changes</button>
+        <button type="button" class="btn btn-secondary" onclick="send()">Save changes</button>
       </div>
     </div>
   </div>
@@ -251,6 +226,36 @@
 
 
 <!-- Modal Ends Here -->
+
+
+<!-- Another Modal Starts Here -->
+<!-- Modal -->
+<div class="modal fade" id="anotherModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form action="{{url_for('table_reservation_add_table')}}" , method="POST">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add A New Table</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <label><small>Table Name (optional)</small></label>
+          <input type="text" class="form-control mb-2" name="name" placeholder="Table Name (optional)"/>
+          <label><small>Location  (optional)</small></label>
+          <input type="text" class="form-control mb-2" name="location" placeholder="e.g. Right beside the entrance"/>
+          <input type="hidden" name="floor"/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button  class="btn btn-primary" type="submit">Save changes</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Another Modal Ends Here -->
 
 
 
@@ -266,11 +271,103 @@
 
 
 
+          var openAnotherModal = (id)=>{
 
-        $("#tableSquare").click(()=>{
+
+            $("input[name=floor]").val(id);
+            $("#anotherModal").modal('show');
+          }
+
+
+
+          var selectedTableID = undefined
+          var selectedFloorId = undefined
+
+          var openReservator = (id, name, location, index, floor, currentTime, bookedTill)=>{
+
+      
+            console.log(currentTime);
+            console.log(bookedTill);
+            selectedTableID = id;
+            selectedFloorId = floor;
+            $("#tnum").html(index);
+            $("#tlocation").html("Location: "+location);
+            $("#tTableName").html("Table Name: "+name);
+            if(currentTime<bookedTill)
+            {
+              time = new Date(bookedTill * 1000);
+              console.log(time)
+              $("#timePicker").hide();
+              $("#messageForTime").html("This Table is already booked. Check back at "+time.getHours()+":"+time.getMinutes());
+            }
+            else{
+              $("#timePicker").show();
+              $("#messageForTime").html("");
+
+            }
 
             $("#exampleModalCenter").modal('show');
-        });
+
+          }
+
+
+          var send = ()=>{
+
+
+              t = $("#timePicker").val();
+              if(t=="")
+              {
+                $.toast({
+                  'text':"Please choose time to continute",
+                  'position':'top-center'
+                })
+
+              }
+              else
+              {
+
+                var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+                  var today = new Date()
+                  var d = Date.parse(""+today.getDate()+" "+months[today.getMonth()]+" "+(today.getYear()+1900)+" "+t+":00 EDT");
+                  
+                  if(today >= d)
+                  {
+                    alert("Cannot Reserve table, choose a future date.");
+
+                  }
+                  else
+                  {
+                    //alert("GOOD");
+                    ticks = d;
+                 
+                    $.ajax(
+                      {
+                        'url':"{{url_for('table_reservation_reserve')}}",
+                        "method":"POST",
+                        "data":{
+                          "ticks":ticks,
+                          "floor":selectedFloorId,
+                          "table":selectedTableID
+                        },
+                        "success":(data)=>{
+                          alert("Table Reservation Successfull. ");
+                          location.reload()
+                          
+                        },
+                        "error":(err)=>{
+                          alert("ERROR HPPEND");
+                        }
+                      }
+                    );
+                  }
+
+
+
+
+              }
+
+          }
+        
 
 
       </script>

@@ -33,6 +33,12 @@
         {
             font-weight:bold;
         }
+        .sidebar-cart
+        {
+          min-height: 90vh;
+          border-radius: 50px;
+          background-color: #e2e2e2;
+        }
 
     </style>
 </head>
@@ -41,14 +47,16 @@
     <div class="d-flex" id="wrapper">
 
         {% include 'private/content/sidebar.html' %}
-    
+
         <!-- Page Content -->
         <div id="page-content-wrapper">
-    
+
           {% include 'private/content/navbar.html' %}
-    
+
           <div class="container-fluid">
-            <h1 class="mt-4">Create An Order</h1>
+            <div class="row ">
+                <div class="col-md-9 main-content">
+                  <h1 class="mt-4">Create An Order</h1>
             <p>You can create an order here. Please start adding the products in the Tray</p>
 
              {%for category in data['categories']%}
@@ -58,27 +66,79 @@
                       <div class="row mt-5">
                           {%for product in data.products[category.id]%}
 
+                           {%if product.is_active %}
                            <div class="col-1 col-md-3 col-lg-2 holder" onclick="openAddToCartModal('{{product.id}}','{{product.category}}', '{{product.restaurant}}');">
-                              <div class="image-holder">
+                            <div class="image-holder">
 
-                                    <img src="{{url_for('static', filename='images/'+product.image)}}">
-                                    <br/>
-                                    <br/>
+                                  <img src="{{url_for('static', filename='images/'+product.image)}}">
+                                  <br/>
+                                  <br/>
 
 
-                              </div>
-                                 <h6>{{product.name}}</h6>
-                                ${{product.price}}
-                          </div>
+                            </div>
+                               <h6>{{product.name}}</h6>
+                              ${{product.price}}
+                        </div>
+                           {%endif%}
                           {%endfor%}
                       </div>
                   </div>
               </div>
               {%endfor%}
+                </div>
+                <div class="col-md-3 p-3">
+                  <div class="sidebar-cart p-3" style="display: flex; flex-direction: column;">
+                    <style>
+                      .empty-state
+                      {
+                          display: flex;
+                          align-items: center;
+                          padding: 10%;
+                          flex-direction: column;
+                          color:grey;
+                      }
+                      .plus-icon
+                      {
+
+                        font-size: 72px;
+                        color:grey;
+                        border:5px dashed grey;
+
+                        padding:10% 20%;
+                        border-radius:30px;
+
+                      }
+
+                      .not-active
+                      {
+                        display: none;
+                      }
+
+                      .image-in-cart
+                      {
+                        height:60px;
+                        width: 60px;
+                        border-radius: 10px;;
+                      }
+                    </style>
+                      <div class="empty-state ">
+                          <span class="plus-icon">+</span>
+                          <h4 class="mt-5">Add Items To Tray</h4>
+                      </div>
+                      <div class="products mt-5" id="products_">
+
+                      </div>
+                      <button class="btn btn-primary btn-block" onclick="checkout()" style="align-self: flex-end;">Checkout</button>
+                      <br/>
+                      <br/>
+
+                  </div>
+                </div>
+            </div>
         </div>
         </div>
         <!-- /#page-content-wrapper -->
-    
+
       </div>
       <!-- /#wrapper -->
    <!-- ADD NEW PRODUCT MODAL STARTS -->
@@ -113,7 +173,7 @@
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary btn-block">Add To Tray</button>
+              <button type="button" class="btn btn-secondary btn-block" id="trayAdder">Add To Tray</button>
             </div>
           </div>
         </div>
@@ -122,6 +182,12 @@
       </div>
 
       <script>
+
+
+
+
+        productsInTray = []
+        selectedProduct = undefined
         $("#menu-toggle").click(function(e) {
           e.preventDefault();
           $("#wrapper").toggleClass("toggled");
@@ -151,7 +217,7 @@
 
             variants.forEach((variant)=>{
                                 var element = `
-                <input type="radio" name='selectedVariant' id="${variant}" value=${variant} /> ${variant} <br/>
+                <input type="radio" name='selectedVariant' id="${variant}" value=${variant} /> <label for="${variant}">${variant}</label> <br/>
 
                 `;
 
@@ -166,7 +232,8 @@
             allProducts = {{data.products|safe}};
             products = allProducts[category]
             console.log( );
-            variants = products.filter( (pro) => { console.log(pro); return pro['id'] == product })[0]['variants'];
+            selectedProduct = products.filter( (pro) => { console.log(pro); return pro['id'] == product })[0]
+            variants = selectedProduct['variants'];
             renderVariants(variants);
            $("#addProductToTrayModal").modal('show');
            $("#num").html(number);
@@ -175,11 +242,217 @@
 
 
 
-        addToTray = ()=>{
+        validateIfVariantSelected = ()=>{
+
+          if($("input[name=selectedVariant]:checked").val() == undefined)
+          {
+            return false;
+          }
+
+          return $("input[name=selectedVariant]:checked").val();
+      }
+
+        var qtyInTray = 0;
+        $("#trayAdder").click(()=>{
+
+            var variant = validateIfVariantSelected();
+              if(variant)
+              {
+
+                var qty = $("#num").html();
+
+               qty = parseInt(qty)
+                console.log(qty);
+                qtyInTray += qty;
+
+                console.log(selectedProduct);
+
+
+                selectedProduct['qty'] = qty;
+                selectedProduct['variant'] = variant;
+
+                productsInTray.push(selectedProduct);
+
+                updateTray();
+
+                renderTray();
+                $("#addProductToTrayModal").modal("hide");
 
 
 
-        }
+              }
+              else
+              {
+                $.toast(
+                  {text:"Please select a variant", position:"top-center"}
+                )
+              }
+          });
+
+
+          updateTray = ()=>{
+
+            if(qtyInTray == 0)
+            {
+                $("#bad").fadeOut();
+            }
+            else
+            {
+              $("#bad").fadeIn();
+              $("#bad").html(qtyInTray);
+            }
+
+
+          }
+
+
+          var currentProductCountInCart = 0
+          renderTray = () => {
+
+            $("#products_").html("");
+              $(".empty-state").addClass("not-active");
+              productsInTray.forEach((selectedProduct)=>{
+
+
+              var element = productInCartElement(selectedProduct.image, selectedProduct.name, selectedProduct.qty, selectedProduct.price, selectedProduct.variant , selectedProduct.id)
+              $("#products_").append(element);
+
+
+              })
+
+          }
+
+
+           productInCartElement = (image, product, qty, price, variant, id)=>{
+
+
+              return `
+
+          <div class="row product">
+                          <div class="col-3">
+                            <img src="{{url_for('static', filename='images/')}}${image}" class="image-in-cart" />
+                          </div>
+                          <div class="col-9">
+                            <div class="product-details">
+                              <h6>${product}</h6>
+                              <div class="row">
+                                <div class="col-8" style="color: grey; font-weight: dark;">
+                                  Size: ${variant} <br/>
+                                  Qty: ${qty}
+                                  <span onclick=deleteProductFromCart('${id}') style="color:grey;"><i class="fas fa-trash-alt"></i></span>
+                                </div>
+                                <div class="col-4" style="color: grey; font-weight: dark; text-align: right;" >$${price}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <hr/>
+
+          `
+
+
+          }
+
+
+          deleteProductFromCart = (id)=>{
+
+            indexToDelete = -1;
+            for(var i=0;i<productsInTray.length;i++)
+            {
+              if(productsInTray[i].id == id)
+              {
+                qtyInTray -= productsInTray[i].qty;
+                indexToDelete = i;
+              }
+            }
+
+            productsInTray.splice(indexToDelete, 1);
+            renderTray();
+
+            if(productsInTray.length == 0)
+            {
+              $(".empty-state").removeClass("not-active");
+            }
+            updateTray();
+
+
+          }
+
+
+
+
+
+
+          checkout = ()=>{
+
+
+                if(productsInTray.length == 0)
+                {
+                    $.toast({
+                        text:"please add items in tray before checkout",
+                        position:"top-center"
+                    });
+                }
+                else
+                {
+
+                    console.log("THIS IS CHECKOUT");
+                    productsInTray.forEach((product)=>{
+
+                        delete product['id'];
+                        delete product['category'];
+                        delete product['is_active'];
+                        delete product['restaurant'];
+                        delete product['variants'];
+                        
+                     
+                        console.log(product);
+
+
+
+                    });
+
+                   
+                    
+                    $.ajax({
+                        url:'/orders/create/',
+                        method:'POST',
+                        dataType:'json',
+                        contentType:'application/json',
+                        data:JSON.stringify(productsInTray),
+                        success:(data)=>{
+                            if( data.status == "OK")
+                            {
+                              $.toast({
+                                'text':"Order successfully created. Please serve the order to the customer and then start another order (if any). To see past orders, go to order history.",
+                                'position':'top-center'
+                              });
+
+                              cleanCart();
+
+                            }
+                        },
+                        error:(err)=>{}
+                    });
+                }
+
+
+                cleanCart = () => {
+
+                  $()
+                  productsInTray = []
+                  qtyInTray  = 0
+                  renderTray()
+                  updateTray()
+
+                  if(productsInTray.length == 0)
+            {
+              $(".empty-state").removeClass("not-active");
+            }
+
+                }
+
+          }
 
 
       </script>

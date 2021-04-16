@@ -6,6 +6,7 @@ from config import *
 import time
 import requests
 import os
+import datetime as dt
 
 # imports end
 
@@ -79,6 +80,7 @@ def dashboard():
     if not check_user_signed_in():
         return redirect(url_for('index'))
     categories = requests.get(API_URL + "/category/", json={"restaurant": get_user_signed_in()})
+    print(categories)
     d = categories.json()
 
     products = {}
@@ -98,13 +100,88 @@ def dashboard():
 
 @app.route('/table-reservation/')
 def table_reservation():
-    # if not check_user_signed_in():
-    #     return redirect(url_for('index'))
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
+
+    floors = requests.get(API_URL + "/table/", json = {'restaurant':get_user_signed_in()})
+    floors = floors.json()
+    for floor in floors:
+       
+
+        for table in floor['tables']:
+            if table["bookedTill"] != None:
+                table['bookedTill'] = int(int(table['bookedTill'])/1000)
+                print(table)
+            else:
+                table['bookedTill']=0
+
+    
+    
     data = {
         "brandName": BRAND_NAME,
+        "floors":floors,
+        "currentTime":int(dt.datetime.timestamp(dt.datetime.now()))
 
     }
     return render_template("private/table-reservation.html", data=data)
+
+
+@app.route("/table-reservation/add-floor/")
+def table_reservation_add_floor():
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
+    
+    r = requests.post(API_URL + '/table/', json = {'restaurant':get_user_signed_in(), 'floor_flag':1})
+    if r.status_code == 200:
+        return redirect(url_for('table_reservation'))
+
+@app.route("/table-reservation/delete-floor/")
+def table_reservation_delete_floor():
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
+    r = requests.delete(API_URL + '/table/', json = {'restaurant':get_user_signed_in(), 'floor':floor})
+    if r.status_code == 200:
+        return redirect(url_for('table_reservation'))
+@app.route("/table-reservation/add-table/" , methods=["POST"])
+def table_reservation_add_table():
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
+    json = request.form
+
+
+    name = json.get("name","")
+   
+    location = json.get("location","")
+    floor = json.get("floor","")
+    print(floor)
+    r = requests.post(API_URL + '/table/', json = {'restaurant':get_user_signed_in(), 'table':{'name':name, 'location':location }, 'floor':floor})
+    print(r.json())
+    if r.status_code == 200:
+        return redirect(url_for('table_reservation', added=True))
+    else:
+        return redirect(url_for('table_reservation', added=False))
+
+    
+
+@app.route("/table-reservation/reserve/" , methods=["POST"])
+def table_reservation_reserve():
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
+    json = request.form
+
+
+    ticks = json.get("ticks","")
+    floor = json.get("floor","")
+    table = json.get("table","")
+    print(ticks,floor,table)
+    r = requests.put(API_URL + '/table/', json = {'restaurant':get_user_signed_in(), 'table':table, 'floor':floor, 'ticks':ticks})
+    print(r.json())
+    if r.status_code == 200:
+        return redirect(url_for('table_reservation', reserved=True))
+    else:
+        return redirect(url_for('table_reservation', reserved=False))
+
+    
 
 
 @app.route('/menu-management/')
@@ -158,12 +235,13 @@ def menu_management_add_product():
     productName = request.form['product_name']
     price = request.form['price']
     variants = request.form['variants'].split(",")
+    variants = [variant.strip() for variant in variants]
     data = {
         "image": image,
         "category": category,
         "name": productName,
         "price": price,
-        "variants": variants.strip(),
+        "variants": variants,
         "restaurant": get_user_signed_in()
     }
     if not os.path.exists(UPLOAD_FOLDER):
@@ -187,6 +265,42 @@ def menu_management_delete_product():
 
     else:
         return redirect(url_for('menu_management'))
+
+
+
+
+
+@app.route("/orders/create/" , methods=["POST"])
+def orders_create():
+    data = request.json #data contains all the products. 
+
+    total = sum([float(x['price']) * float(x['qty'] ) for x in data])
+
+    details = {'datetime':dt.datetime.now().strftime('%c'),
+        'order_total':total}
+    
+
+    r = requests.post(API_URL + "/orders/", json = {"restaurant":get_user_signed_in(), "details":details, "products":data})
+    print(r.status_code)
+    return {"status":"OK", "message":"Order Created Successfully", "order_total":total}
+
+
+@app.route("/orders/history/")
+def orders_history():
+    if not check_user_signed_in():
+        return redirect(url_for('index'))
+    
+
+    orders = requests.get(API_URL + "/orders/" , json={"restaurant":get_user_signed_in()})
+    orders = orders.json() 
+    data = {
+        "brandName": BRAND_NAME,
+        "orders":orders
+    }
+    return render_template('private/order-history.html', data = data)
+
+
+
 
 
 # private content ends
